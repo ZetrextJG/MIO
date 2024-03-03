@@ -22,9 +22,9 @@ class Sequential(Model):
             grad = component.backward(grad)
         return grad
 
-    def reset_grad(self):
+    def zero_grad(self):
         for component in self.components:
-            component.reset_grad()
+            component.zero_grad()
 
     def parameters(self) -> Iterator[Parameter]:
         for component in self.components:

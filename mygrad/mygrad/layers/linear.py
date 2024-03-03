@@ -73,6 +73,6 @@ class Linear(Layer):
 
         return backward_grad
 
-    def reset_grad(self):
+    def zero_grad(self):
         for param in self.parameters_:
             param.zero_grad()

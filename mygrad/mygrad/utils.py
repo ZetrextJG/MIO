@@ -22,5 +22,5 @@ class Component(ABC):
         ...
 
     @abstractmethod
-    def reset_grad(self) -> np.ndarray:
+    def zero_grad(self) -> np.ndarray:
         ...

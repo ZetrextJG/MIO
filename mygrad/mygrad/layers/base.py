@@ -19,6 +19,6 @@ class Layer(Component, ABC):
         ...
 
     @abstractmethod
-    def reset_grad(self):
+    def zero_grad(self):
         """Resets the gradients for the parameters of the layer"""
         ...
