@@ -1,4 +1,4 @@
-from typing import Callable, Iterator, Optional
+from typing import Callable, Dict, Iterator, Optional, Literal
 import numpy as np
 from mygrad.activations import ActivationFunction, Tanh
 from mygrad.layers.base import Layer
@@ -26,12 +26,21 @@ def he_method(output_size: int, input_size: int):
     return np.random.randn(input_size, output_size) * np.sqrt(2 / input_size)
 
 
+INIT_METHODS: Dict[str, Callable[[int, int], np.ndarray]] = {
+    "uniform": uniform,
+    "normal": normal,
+    "xavier": xavier_method,
+    "he": he_method,
+}
+INIT_METHODS_STR = Literal["uniform", "normal", "xavier", "he"]
+
+
 class Linear(Layer):
     def __init__(
         self,
         input_size: int,
         output_size: int,
-        init_function: Callable[[int, int], np.ndarray] = xavier_method,
+        init_function: INIT_METHODS_STR = "xavier",
         activation_function: ActivationFunction = Tanh(),
         weights: Optional[np.ndarray] = None,
         bias: Optional[np.ndarray] = None,
@@ -40,7 +49,8 @@ class Linear(Layer):
         self.output_size = output_size
 
         if weights is None:
-            weights = init_function(output_size, input_size)
+            init = INIT_METHODS[init_function]
+            weights = init(output_size, input_size)
 
         if bias is None:
             bias = np.zeros(output_size)
