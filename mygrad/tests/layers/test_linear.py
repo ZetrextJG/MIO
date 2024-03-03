@@ -35,3 +35,13 @@ def test_reset_grad():
     layer.reset_grad()
 
     assert not np.any(layer.parameters().__next__().grad)
+
+
+def test_parameters():
+    layer = Linear(3, 2)
+    params = list(layer.parameters())
+    assert len(params) == 2
+    layer.reset_grad()
+
+    first_param = params[0]
+    assert np.allclose(first_param.grad, np.zeros_like(first_param.grad))
