@@ -57,4 +57,25 @@ class ReLU(ActivationFunction):
         return np.maximum(0, x)
 
     def grad(self, x: np.ndarray) -> np.ndarray:
-        return (x > 0).astype(int)
+        return (x > 0) * 1
+
+
+class LeakyReLU(ActivationFunction):
+    leak: float
+
+    def __init__(self, leak: float = 0.01):
+        self.leak = leak
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        return np.maximum(self.leak * x, x)
+
+    def grad(self, x: np.ndarray) -> np.ndarray:
+        return (x > 0) * 1 + self.leak * (x <= 0)
+
+
+class ThresholdJump(ActivationFunction):
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        return np.where(x > 0, 1, 0)
+
+    def grad(self, x: np.ndarray) -> np.ndarray:
+        return (x > 0) * 1  # HACK: This in not really the gradient, but it will do

@@ -1,4 +1,4 @@
-from typing import Callable, Iterator, Optional, Tuple
+from typing import Callable, Iterator, Optional
 import numpy as np
 from mygrad.activations import ActivationFunction, Tanh
 from mygrad.layers.base import Layer
