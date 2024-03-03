@@ -1,9 +1,11 @@
 import numpy as np
 from abc import ABC, abstractmethod
 
+from mygrad.utils import Component
 
-class Model(ABC):
-    components: tuple
+
+class Model(Component, ABC):
+    components: tuple[Component, ...]
 
     @abstractmethod
     def forward(self, x: np.ndarray) -> np.ndarray:

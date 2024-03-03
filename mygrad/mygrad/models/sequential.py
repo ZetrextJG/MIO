@@ -1,11 +1,14 @@
 import numpy as np
 
 from mygrad.models.base import Model
+from mygrad.utils import Component
 
 
 class Sequential(Model):
-    def __init__(self, *components):
+    def __init__(self, *components: Component):
         self.components = components
+        self.input_size = components[0].input_size
+        self.output_size = components[-1].output_size
 
     def forward(self, x: np.ndarray) -> np.ndarray:
         for component in self.components:

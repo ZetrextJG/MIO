@@ -2,9 +2,10 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from mygrad.layers.parameters import Parameter
+from mygrad.utils import Component
 
 
-class Layer(ABC):
+class Layer(Component, ABC):
     parameters: list[Parameter]
 
     @abstractmethod
