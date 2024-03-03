@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 class Preprocessor(ABC):
     input_size: int
     output_size: int
+    was_fit: bool
 
     @abstractmethod
     def fit(self, x: np.ndarray) -> np.ndarray:
@@ -13,6 +14,11 @@ class Preprocessor(ABC):
 
     @abstractmethod
     def transform(self, x: np.ndarray) -> np.ndarray:
+        """Transform the data using the preprocessor"""
+        ...
+
+    @abstractmethod
+    def reverse(self, x: np.ndarray) -> np.ndarray:
         """Transform the data using the preprocessor"""
         ...
 
