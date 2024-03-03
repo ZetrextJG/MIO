@@ -1,9 +1,9 @@
-from typing import Callable, Optional, Tuple
+from typing import Callable, Iterator, Optional, Tuple
 import numpy as np
 from mygrad.activations import ActivationFunction, Tanh
 from mygrad.layers.base import Layer
 import mygrad.functional as ff
-from mygrad.layers.parameters import Parameter
+from mygrad.parameters import Parameter
 
 
 def uniform(output_size: int, input_size: int):
@@ -47,10 +47,14 @@ class Linear(Layer):
 
         self.W = Parameter(weights)
         self.b = Parameter(bias)
-        self.parameters = [self.W, self.b]
+        self.parameters_ = [self.W, self.b]
 
         self.activation_function = activation_function
         self.activation_grad = np.zeros(output_size)
+
+    def parameters(self) -> Iterator[Parameter]:
+        for param in self.parameters_:
+            yield param
 
     def forward(self, x: np.ndarray) -> np.ndarray:
         self.last_x = x
@@ -70,5 +74,5 @@ class Linear(Layer):
         return backward_grad
 
     def reset_grad(self):
-        for param in self.parameters:
+        for param in self.parameters_:
             param.zero_grad()

@@ -11,8 +11,8 @@ def test_simple_dense_model():
     grad = np.ones_like(y)
     model.backward(grad)
 
-    assert np.any(model.components[0].parameters[0].grad)
+    assert np.any(model.components[0].parameters().__next__().grad)
 
     model.reset_grad()
 
-    assert not np.any(model.components[0].parameters[0].grad)
+    assert not np.any(model.components[0].parameters().__next__().grad)

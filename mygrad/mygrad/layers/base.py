@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 
-from mygrad.layers.parameters import Parameter
+from mygrad.parameters import Parameter
 from mygrad.utils import Component
 
 

@@ -1,5 +1,8 @@
+from typing import Generator, Iterator
 import numpy as np
 from abc import ABC, abstractmethod
+
+from mygrad.parameters import Parameter
 
 
 class Component(ABC):
@@ -12,6 +15,10 @@ class Component(ABC):
 
     @abstractmethod
     def backward(self, grad: np.ndarray) -> np.ndarray:
+        ...
+
+    @abstractmethod
+    def parameters(self) -> Iterator[Parameter]:
         ...
 
     @abstractmethod

@@ -34,4 +34,4 @@ def test_reset_grad():
     layer.backward(grad)
     layer.reset_grad()
 
-    assert not np.any(layer.parameters[0].grad)
+    assert not np.any(layer.parameters().__next__().grad)
