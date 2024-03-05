@@ -1,11 +1,11 @@
 import numpy as np
 
-from mygrad.optimizers.sgd import GradientDescent
+from mygrad.optimizers.sgd import SGD
 from mygrad.losses import AbsoluteDifferenceLoss
 import mygrad.components as mc
 
 
-def test_gradient_descent_optimizer_pass():
+def sanity_test_gradient_descent():
     model = mc.Sequential(
         mc.Linear(
             2,
@@ -25,7 +25,7 @@ def test_gradient_descent_optimizer_pass():
     x = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
     y = np.array([[1], [0], [0], [1]])
     loss = AbsoluteDifferenceLoss()
-    optimizer = GradientDescent(model.parameters(), learning_rate=0.01)
+    optimizer = SGD(model.parameters(), learning_rate=0.01)
 
     for _ in range(100):
         y_pred = model.forward(x)
