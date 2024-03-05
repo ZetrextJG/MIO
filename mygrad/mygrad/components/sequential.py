@@ -1,16 +1,14 @@
 from typing import Iterator
+from functools import cache
 import numpy as np
 
-from mygrad.models.base import Model
 from mygrad.parameters import Parameter
-from mygrad.utils import Component
+from mygrad.components import Component
 
 
-class Sequential(Model):
+class Sequential(Component):
     def __init__(self, *components: Component):
         self.components = components
-        self.input_size = components[0].input_size
-        self.output_size = components[-1].output_size
 
     def forward(self, x: np.ndarray) -> np.ndarray:
         for component in self.components:
@@ -21,6 +19,12 @@ class Sequential(Model):
         for component in reversed(self.components):
             grad = component.backward(grad)
         return grad
+
+    @cache
+    def next_dim(self, dim: int) -> int:
+        for component in self.components:
+            dim = component.next_dim(dim)
+        return dim
 
     def zero_grad(self):
         for component in self.components:

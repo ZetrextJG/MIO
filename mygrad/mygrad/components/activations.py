@@ -1,0 +1,77 @@
+from collections.abc import Iterator
+import numpy as np
+from abc import ABC, abstractmethod
+
+from mygrad.components import Component
+from mygrad.parameters import Parameter
+
+
+class ActivationFunction(Component, ABC):
+    activation_grad: np.ndarray
+
+    @abstractmethod
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        ...
+
+    def backward(self, grad: np.ndarray) -> np.ndarray:
+        assert np.any(self.activation_grad), "The activation gradient is not set"
+        return grad * self.activation_grad
+
+    def next_dim(self, dim: int) -> int:
+        return dim
+
+    def zero_grad(self):
+        assert np.any(self.activation_grad), "The activation gradient is not set"
+        self.activation_grad = np.zeros_like(self.activation_grad)
+
+    def parameters(self) -> Iterator[Parameter]:
+        return iter([])
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return self.forward(x)
+
+
+class Identity(ActivationFunction):
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        self.activation_grad = np.ones_like(x)
+        return x
+
+
+class Sigmoid(ActivationFunction):
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        sig = 1 / (1 + np.exp(-x))
+        self.activation_grad = sig * (1 - sig)
+        return sig
+
+
+class Tanh(ActivationFunction):
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        tan = np.tanh(x)
+        self.activation_grad = 1 - tan**2
+        return tan
+
+
+class ReLU(ActivationFunction):
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        self.activation_grad = (x > 0) * 1
+        return np.maximum(0, x)
+
+
+class LeakyReLU(ActivationFunction):
+    leak: float
+
+    def __init__(self, leak: float = 0.01):
+        self.leak = leak
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        self.activation_grad = (x > 0) * 1 + self.leak * (x <= 0)
+        return np.maximum(self.leak * x, x)
+
+
+class ThresholdJump(ActivationFunction):
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        value = (x > 0) * 1
+        self.activation_grad = (
+            value  # HACK: This in not really the gradient, but it will do
+        )
+        return value

@@ -1,5 +1,5 @@
 import numpy as np
-from mygrad.layers import Linear
+from mygrad.components import Linear
 
 
 def test_single_value_linear():
