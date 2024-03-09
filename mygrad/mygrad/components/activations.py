@@ -1,4 +1,5 @@
 from collections.abc import Iterator
+from typing import Optional
 import numpy as np
 from abc import ABC, abstractmethod
 
@@ -7,22 +8,25 @@ from mygrad.parameters import Parameter
 
 
 class ActivationFunction(Component, ABC):
-    activation_grad: np.ndarray
+    activation_grad: Optional[np.ndarray]
+
+    def __init__(self):
+        self.activation_grad = None
 
     @abstractmethod
     def forward(self, x: np.ndarray) -> np.ndarray:
         ...
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
-        assert np.any(self.activation_grad), "The activation gradient is not set"
+        assert self.activation_grad is not None, "The activation gradient is not set"
         return grad * self.activation_grad
 
     def next_dim(self, dim: int) -> int:
         return dim
 
     def zero_grad(self):
-        assert np.any(self.activation_grad), "The activation gradient is not set"
-        self.activation_grad = np.zeros_like(self.activation_grad)
+        assert self.activation_grad is not None, "The activation gradient is not set"
+        self.activation_grad = None
 
     def parameters(self) -> Iterator[Parameter]:
         return iter([])

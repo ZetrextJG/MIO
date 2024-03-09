@@ -1,6 +1,6 @@
 from typing import Callable, Dict, Iterator, Optional, Literal
 import numpy as np
-import mygrad.components as comp
+import mygrad.components as mc
 import mygrad.functional as ff
 from mygrad.parameters import Parameter
 
@@ -36,7 +36,7 @@ INIT_METHODS_STR = Literal["uniform", "normal", "xavier", "he"]
 
 
 # Linear layer
-class Linear(comp.Component):
+class Linear(mc.Component):
     input_size: int
     output_size: int
 

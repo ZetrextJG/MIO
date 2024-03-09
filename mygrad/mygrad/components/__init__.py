@@ -11,3 +11,4 @@ from mygrad.components.activations import (
 )
 
 from mygrad.components.sequential import Sequential
+from mygrad.components.softmax import Softmax
