@@ -16,9 +16,14 @@ def normal(input_size: int, output_size: int):
     return np.random.randn(input_size, output_size)
 
 
-def xavier_method(input_size: int, output_size: int):
+def uniform_xavier_method(input_size: int, output_size: int):
     """Returns values initialized using the Xavier method."""
     return uniform(input_size, output_size) * np.sqrt(6 / (input_size + output_size))
+
+
+def normal_xavier_method(input_size: int, output_size: int):
+    """Returns values initialized using the Xavier method."""
+    return uniform(input_size, output_size) * np.sqrt(2 / (input_size + output_size))
 
 
 def he_method(input_size: int, output_size: int):
@@ -29,10 +34,11 @@ def he_method(input_size: int, output_size: int):
 INIT_METHODS: Dict[str, Callable[[int, int], np.ndarray]] = {
     "uniform": uniform,
     "normal": normal,
-    "xavier": xavier_method,
+    "xavier": uniform_xavier_method,
+    "normal_xavier": uniform_xavier_method,
     "he": he_method,
 }
-INIT_METHODS_STR = Literal["uniform", "normal", "xavier", "he"]
+INIT_METHODS_STR = Literal["uniform", "normal", "xavier", "he", "normal_xavier"]
 
 
 # Linear layer
@@ -74,7 +80,7 @@ class Linear(mc.Component):
         return sigma
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
-        n = len(self.last_x)
+        n = self.last_x.shape[1]
         backward_grad = grad @ self.W.data
 
         self.W.grad += (grad.T @ self.last_x) / n

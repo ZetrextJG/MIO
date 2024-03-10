@@ -4,13 +4,28 @@ import numpy as np
 from mygrad.preprocessors.base import Preprocessor
 
 
+class IdentityScaler(Preprocessor):
+    def fit(self, x: np.ndarray):
+        pass
+
+    def transform(self, x: np.ndarray) -> np.ndarray:
+        return x
+
+    def reverse(self, x: np.ndarray) -> np.ndarray:
+        return x
+
+    def __repr__(self):
+        return "IdentityScaler()"
+
+
 class MinMaxScaler(Preprocessor):
     _mins: np.floating[Any]
     _maxs: np.floating[Any]
 
-    def __init__(self):
+    def __init__(self, final_scale: float = 1):
         self._mins = 0
         self._maxs = 1
+        self.final_scale = final_scale
         self.was_fit = False
 
     def fit(self, x: np.ndarray):
@@ -30,13 +45,13 @@ class MinMaxScaler(Preprocessor):
         if not self.was_fit:
             raise RuntimeError("MinMaxScaler has not been fit")
 
-        return (x - self._mins) / (self._maxs - self._mins)
+        return self.final_scale * (x - self._mins) / (self._maxs - self._mins)
 
     def reverse(self, x: np.ndarray) -> np.ndarray:
         if not self.was_fit:
             raise RuntimeError("MinMaxScaler has not been fit")
 
-        return x * (self._maxs - self._mins) + self._mins
+        return x * (self._maxs - self._mins) / self.final_scale + self._mins
 
     def __repr__(self):
         return f"MinMaxScaler(min={self._mins}, max={self._maxs})"

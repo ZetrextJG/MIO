@@ -14,3 +14,7 @@ class Optimizer(ABC):
     def zero_grad(self):
         for param in self.params:
             param.zero_grad()
+
+    def end_epoch(self):
+        """Called at the end of each epoch"""
+        pass

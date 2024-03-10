@@ -19,5 +19,5 @@ def sigmoid(x: np.ndarray) -> np.ndarray:
     return 1 / (1 + np.exp(-x))
 
 
-def mse(x1: np.ndarray, x2: np.ndarray) -> np.ndarray:
-    return np.mean((x1 - x2) ** 2, axis=1)
+def mse(x1: np.ndarray, x2: np.ndarray, axis=0) -> np.ndarray:
+    return np.mean((x1 - x2) ** 2, axis=axis)

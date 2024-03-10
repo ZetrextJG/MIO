@@ -31,4 +31,4 @@ def test_mse():
 
     x1 = np.array([[1, 2, 3], [4, 5, 6]])
     x2 = np.array([[1, 2, 3], [4, 5, 6]])
-    assert np.allclose(ff.mse(x1, x2), np.array([[0, 0]]))
+    assert np.allclose(ff.mse(x1, x2), np.array([[0, 0, 0]]))

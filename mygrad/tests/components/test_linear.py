@@ -3,7 +3,7 @@ from mygrad.components import Linear
 
 
 def test_single_value_linear():
-    x = np.array([2])
+    x = np.array([2]).reshape(-1, 1)
     layer = Linear(1, 1)
     y = layer.forward(x)
     grad = np.ones_like(y)

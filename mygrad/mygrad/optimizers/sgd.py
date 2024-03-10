@@ -19,14 +19,14 @@ class SGD(Optimizer):
     ):
         self.params = list(params)
 
-        self.momentums_ = [np.zeros_like(param.data) for param in self.params]
-
         # TODO: Might need optimization later
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
         self.momentum = momentum
         self.dampening = dampening
         self.nesterov = nesterov
+
+        self.momentums_ = [np.zeros_like(param.data) for param in self.params]
 
         self.step_count = 0
 
@@ -39,7 +39,7 @@ class SGD(Optimizer):
 
             if self.momentum != 0:
                 if self.step_count > 0:
-                    momentum += momentum * self.momentum + (1 - self.dampening) * change
+                    momentum = momentum * self.momentum + (1 - self.dampening) * change
                 else:
                     momentum = change
 
@@ -50,3 +50,12 @@ class SGD(Optimizer):
 
             param.data -= self.learning_rate * change
             self.step_count += 1
+
+    def zero_grad(self):
+        super().zero_grad()
+
+    def end_epoch(self):
+        self.steps_count = 0
+        if self.momentum != 0:
+            for mom in self.momentums_:
+                mom *= 0

@@ -21,7 +21,7 @@ class Loss(ABC):
 
 class DummyAbsoluteDifferenceLoss(Loss):
     def value(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
-        return np.sum(np.abs(y_pred - y_true), axis=1)
+        return np.sum(np.abs(y_pred - y_true), axis=0)
 
     def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
         """This is not formally the gradient by it will do"""
@@ -30,7 +30,7 @@ class DummyAbsoluteDifferenceLoss(Loss):
 
 class AbsoluteDifferenceLoss(Loss):
     def value(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
-        return np.sum(np.abs(y_pred - y_true), axis=1)
+        return np.sum(np.abs(y_pred - y_true), axis=0)
 
     def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
         return np.sign(y_pred - y_true)
@@ -38,7 +38,15 @@ class AbsoluteDifferenceLoss(Loss):
 
 class MeanSquareErrorLoss(Loss):
     def value(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
-        return ff.mse(y_pred, y_true)
+        return ff.mse(y_pred, y_true, axis=0)
 
     def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
         return 2 * (y_pred - y_true)
+
+
+class LogCoshLoss(Loss):
+    def value(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
+        return np.log(np.cosh(y_pred - y_true)).sum()
+
+    def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
+        return np.tanh(y_pred - y_true)
