@@ -1,5 +1,5 @@
 from collections.abc import Iterator
-from typing import Optional
+from typing import Literal, Optional
 import numpy as np
 from abc import ABC, abstractmethod
 
@@ -79,3 +79,13 @@ class ThresholdJump(ActivationFunction):
             value  # HACK: This in not really the gradient, but it will do
         )
         return value
+
+
+ACTIVATION_METHODS: dict[str, type[ActivationFunction]] = {
+    "identity": Identity,
+    "tanh": Tanh,
+    "sigmoid": Sigmoid,
+    "relu": ReLU,
+    "threshold": ThresholdJump,
+}
+ACTIVATION_METHODS_STR = Literal["identity", "tanh", "sigmoid", "relu", "threshold"]

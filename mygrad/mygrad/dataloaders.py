@@ -35,7 +35,15 @@ class NumpyRegressionDataloader:
     def __len__(self) -> int:
         return math.ceil(len(self.x) / self.batch_size)
 
+    def shuffle_data(self) -> None:
+        p = np.random.permutation(len(self.x))
+        self.x = self.x[p, :]
+        self.y = self.y[p, :]
+
     def __iter__(self) -> Iterator[tuple[np.ndarray, np.ndarray]]:
+        if self.shuffle:
+            self.shuffle_data()
+
         iterations = math.ceil(len(self.x) / self.batch_size)
         for i in range(0, iterations):
             start_index = i * self.batch_size
@@ -44,7 +52,3 @@ class NumpyRegressionDataloader:
                 self.x[start_index:end_index].copy(),
                 self.y[start_index:end_index].copy(),
             )
-        if self.shuffle:
-            p = np.random.permutation(len(self.x))
-            self.x = self.x[p, :]
-            self.y = self.y[p, :]
