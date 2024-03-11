@@ -54,7 +54,9 @@ class Linear(mc.Component):
         weights: Optional[np.ndarray] = None,
         bias: Optional[np.ndarray] = None,
     ):
+        self.input_size = input_size
         self.output_size = output_size
+        self.init_used = init
 
         if weights is None:
             f = INIT_METHODS[init]
@@ -91,3 +93,6 @@ class Linear(mc.Component):
     def zero_grad(self):
         for param in self.parameters_:
             param.zero_grad()
+
+    def __str__(self):
+        return f"Linear(input_size={self.input_size}, output_size={self.output_size}, init={self.init_used})"

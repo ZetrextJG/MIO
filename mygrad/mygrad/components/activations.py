@@ -34,6 +34,9 @@ class ActivationFunction(Component, ABC):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         return self.forward(x)
 
+    def __str__(self):
+        return self.__class__.__name__ + "()"
+
 
 class Identity(ActivationFunction):
     def forward(self, x: np.ndarray) -> np.ndarray:

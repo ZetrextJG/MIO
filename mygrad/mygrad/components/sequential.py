@@ -4,6 +4,7 @@ import numpy as np
 
 from mygrad.parameters import Parameter
 from mygrad.components import Component
+from tests.test_utils import indent_lines
 
 
 class Sequential(Component):
@@ -33,3 +34,8 @@ class Sequential(Component):
     def parameters(self) -> Iterator[Parameter]:
         for component in self.components:
             yield from component.parameters()
+
+    def __str__(self):
+        body = ",\n".join([str(comp) for comp in self.components])
+        indeted_body = indent_lines(body)
+        return f"Sequential(\n{indeted_body}\n)"
