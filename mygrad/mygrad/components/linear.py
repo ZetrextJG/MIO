@@ -1,6 +1,7 @@
 from typing import Callable, Dict, Iterator, Optional, Literal
 import numpy as np
 import mygrad.components as mc
+from mygrad.components.base import FixedDimension
 import mygrad.functional as ff
 from mygrad.parameters import Parameter
 
@@ -41,8 +42,7 @@ INIT_METHODS: Dict[str, Callable[[int, int], np.ndarray]] = {
 INIT_METHODS_STR = Literal["uniform", "normal", "xavier", "he", "normal_xavier"]
 
 
-# Linear layer
-class Linear(mc.Component):
+class Linear(FixedDimension, mc.Component):
     input_size: int
     output_size: int
 
@@ -68,9 +68,6 @@ class Linear(mc.Component):
         self.W = Parameter(weights)
         self.b = Parameter(bias)
         self.parameters_ = [self.W, self.b]
-
-    def next_dim(self, dim: int) -> int:
-        return self.output_size
 
     def parameters(self) -> Iterator[Parameter]:
         for param in self.parameters_:

@@ -1,15 +1,23 @@
 from typing import Iterator
 from functools import cache
 import numpy as np
+from mygrad.components.base import FixedDimension
 
 from mygrad.parameters import Parameter
 from mygrad.components import Component
 from tests.test_utils import indent_lines
 
 
-class Sequential(Component):
+class Sequential(FixedDimension, Component):
     def __init__(self, *components: Component):
         self.components = components
+
+        first = components[0]
+        assert isinstance(
+            first, FixedDimension
+        ), "First component must have a fixed dimension"
+        self.input_size = first.input_size
+        self.output_size = self.next_dim(self.input_size)
 
     def forward(self, x: np.ndarray) -> np.ndarray:
         for component in self.components:

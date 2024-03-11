@@ -30,3 +30,12 @@ class Component(ABC):
     def zero_grad(self):
         """Clears the gradients of the parameters of the component"""
         ...
+
+
+class FixedDimension:
+    input_size: int
+    output_size: int
+
+    def next_dim(self, dim: int) -> int:
+        assert dim == self.input_size
+        return self.output_size
