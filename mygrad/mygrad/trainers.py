@@ -45,7 +45,7 @@ class RegressionTrainer:
             )
 
         if self.store_params_lengths:
-            current_param_length = np.linalg.norm(current_params)
+            current_param_length = np.linalg.norm(current_params)  # type: ignore
             self.params_lengths[store_idx] = current_param_length
 
         if self.store_params_angle_diffs:
@@ -71,8 +71,8 @@ class RegressionTrainer:
         else:
             validation_losses = None
 
-        print(f"### Training - {train_epochs} epochs")
-        for epoch in tqdm(range(train_epochs)):
+        epoch_iter = tqdm(range(train_epochs), desc="Training epochs: ")
+        for epoch in epoch_iter:
             iterator = enumerate(self.train_dataloader)
             if verbose:
                 iterator = tqdm(iterator, total=len(self.train_dataloader))
@@ -90,13 +90,23 @@ class RegressionTrainer:
 
                 self.update_stores(epoch, batch_id, float(loss_value))
 
+                if verbose:
+                    assert isinstance(iterator, tqdm)
+                    iterator.set_postfix({"loss": float(loss_value)})
+                    iterator.refresh()
+
             self.optimizer.zero_grad()
             self.optimizer.end_epoch()
 
             train_losses[epoch] = self.eval(self.train_dataloader)[1]
+            epoch_iter.set_postfix({"epoch_train_loss": train_losses[epoch]})
+            epoch_iter.refresh()
+
             if self.validation_dataloader is not None:
                 assert validation_losses is not None
                 validation_losses[epoch] = self.eval(self.validation_dataloader)[1]
+                epoch_iter.set_postfix({"epoch_eval_loss": validation_losses[epoch]})
+                epoch_iter.refresh()
             self.optimizer.zero_grad()
 
         return train_losses, validation_losses
