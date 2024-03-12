@@ -79,11 +79,10 @@ class Linear(FixedDimension, mc.Component):
         return sigma
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
-        n = self.last_x.shape[1]
         backward_grad = grad @ self.W.data
 
-        self.W.grad += (grad.T @ self.last_x) / n
-        self.b.grad += np.mean(grad, axis=0)
+        self.W.grad += grad.T @ self.last_x
+        self.b.grad += np.sum(grad, axis=0)
 
         return backward_grad
 
