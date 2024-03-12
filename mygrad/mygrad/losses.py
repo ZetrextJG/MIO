@@ -41,12 +41,14 @@ class MeanSquareErrorLoss(Loss):
         return ff.mse(y_pred, y_true, axis=0)
 
     def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
-        return 2 * (y_pred - y_true)
+        n = y_pred.shape[0]
+        return 2 * (y_pred - y_true) / n
 
 
 class LogCoshLoss(Loss):
     def value(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
-        return np.log(np.cosh(y_pred - y_true)).sum()
+        return np.log(np.cosh(y_pred - y_true)).mean()
 
     def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
-        return np.tanh(y_pred - y_true)
+        n = y_pred.shape[0]
+        return np.tanh(y_pred - y_true) / n

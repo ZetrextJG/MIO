@@ -23,4 +23,4 @@ def test_mse_loss():
     y = np.array([[1, 2, 3], [4, 5, 6]])
     loss = losses.MeanSquareErrorLoss()
     assert np.allclose(loss.value(y_pred, y), np.array([2, 0.5, 0]))
-    assert np.allclose(loss.grad(y_pred, y), np.array([[0, 0, 0], [-4, -2, 0]]))
+    assert np.allclose(loss.grad(y_pred, y), np.array([[0, 0, 0], [-2, -1, 0]]))
