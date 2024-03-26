@@ -52,3 +52,35 @@ class LogCoshLoss(Loss):
     def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
         n = y_pred.shape[0]
         return np.tanh(y_pred - y_true) / n
+
+
+EPSILON = 1e-12
+
+
+class BinaryCrossEntropy(Loss):
+    def value(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
+        """Compute the binary cross entropy.
+        The input vectors are assumed to be of shape (batch_size x 1) vectors.
+        """
+        losses = (-1) * (
+            (1 - y_true) * np.log(1 - y_pred + EPSILON)
+            + y_true * np.log(y_pred + EPSILON)
+        )
+        return losses.mean()
+
+    def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
+        g = (1 - y_true) / (1 - y_pred + EPSILON) - y_true / (y_pred + EPSILON)
+        return g
+
+
+class CategorialCorssEntropy(Loss):
+    def value(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
+        """
+        Compute the categorial cross entropy.
+        Input vectors are assumed to be of shape (batch_size x num_classes vectors).
+        """
+        losses = -np.sum(y_true * np.log(y_pred + EPSILON), axis=1)
+        return np.mean(losses)
+
+    def grad(self, y_pred: np.ndarray, y_true: np.ndarray) -> np.ndarray:
+        return -y_true / (y_pred + EPSILON)

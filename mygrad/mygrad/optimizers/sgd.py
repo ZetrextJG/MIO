@@ -1,4 +1,4 @@
-from typing import Iterator, Optional
+from typing import Iterator
 import numpy as np
 
 from mygrad.optimizers import Optimizer
@@ -51,11 +51,7 @@ class SGD(Optimizer):
             param.data -= self.learning_rate * change
             self.step_count += 1
 
-    def zero_grad(self):
-        super().zero_grad()
-
     def end_epoch(self):
-        self.steps_count = 0
         if self.momentum != 0:
             for mom in self.momentums_:
                 mom *= 0

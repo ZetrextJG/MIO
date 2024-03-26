@@ -26,3 +26,18 @@ def Dense(
         if i != len(neurons) - 2:
             layers.append(Activation())
     return Sequential(*layers)
+
+
+def SimpleDense(
+    input_size: int,
+    output_size: int,
+    hidden_layers: int,
+    neurons_per_layer: int,
+    activation: ACTIVATION_METHODS_STR = "relu",
+    init: INIT_METHODS_STR = "xavier",
+):
+    """Returns a sequential model of linear layers with activation layers in between."""
+    layers_list: list[int] = [neurons_per_layer] * hidden_layers
+    layers_list.insert(0, input_size)
+    layers_list.append(output_size)
+    return Dense(layers_list, activation, init)

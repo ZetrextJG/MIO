@@ -5,7 +5,7 @@ from mygrad.components.base import FixedDimension
 
 from mygrad.parameters import Parameter
 from mygrad.components import Component
-from tests.test_utils import indent_lines
+from mygrad.utils import indent_lines
 
 
 class Sequential(FixedDimension, Component):
@@ -46,4 +46,4 @@ class Sequential(FixedDimension, Component):
     def __str__(self):
         body = ",\n".join([str(comp) for comp in self.components])
         indeted_body = indent_lines(body)
-        return f"Sequential(\n{indeted_body}\n)"
+        return indeted_body

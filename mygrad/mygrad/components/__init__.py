@@ -11,5 +11,5 @@ from mygrad.components.activations import (
 )
 
 from mygrad.components.sequential import Sequential
-from mygrad.components.dense import Dense
+from mygrad.components.dense import Dense, SimpleDense
 from mygrad.components.softmax import Softmax

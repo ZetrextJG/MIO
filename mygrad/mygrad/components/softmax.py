@@ -37,3 +37,6 @@ class Softmax(Component):
 
     def zero_grad(self):
         self.last_softmax = None
+
+    def __str__(self):
+        return "Softmax()"

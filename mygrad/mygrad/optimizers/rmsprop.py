@@ -23,3 +23,7 @@ class RMSProp(Optimizer):
             )
             change = param.grad / (np.sqrt(self.squared_gradients[i]) + 1e-8)
             param.data -= self.learning_rate * change
+
+    def end_epoch(self):
+        for sg in self.squared_gradients:
+            sg *= 0
