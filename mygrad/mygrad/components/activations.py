@@ -11,6 +11,7 @@ class ActivationFunction(Component, ABC):
     activation_grad: Optional[np.ndarray]
 
     def __init__(self):
+        super().__init__()
         self.activation_grad = None
 
     @abstractmethod
@@ -19,6 +20,7 @@ class ActivationFunction(Component, ABC):
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
         assert self.activation_grad is not None, "The activation gradient is not set"
+        assert self.training, "The component is not in training mode"
         return grad * self.activation_grad
 
     def next_dim(self, dim: int) -> int:

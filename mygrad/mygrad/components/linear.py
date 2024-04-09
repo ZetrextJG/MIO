@@ -54,6 +54,7 @@ class Linear(FixedDimension, mc.Component):
         weights: Optional[np.ndarray] = None,
         bias: Optional[np.ndarray] = None,
     ):
+        super().__init__()
         self.input_size = input_size
         self.output_size = output_size
         self.init_used = init
@@ -74,7 +75,8 @@ class Linear(FixedDimension, mc.Component):
             yield param
 
     def forward(self, x: np.ndarray) -> np.ndarray:
-        self.last_x = x
+        if self.training:
+            self.last_x = x
         sigma = ff.linear(x, self.W.data, self.b.data)
         return sigma
 

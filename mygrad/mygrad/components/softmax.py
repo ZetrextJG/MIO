@@ -9,8 +9,10 @@ class Softmax(Component):
     def forward(self, x: np.ndarray) -> np.ndarray:
         intermid = np.exp(x)
         sums = np.sum(intermid, axis=1)
-        self.last_softmax = intermid / sums.reshape(-1, 1)
-        return self.last_softmax
+        softmax = intermid / sums.reshape(-1, 1)
+        if self.training:
+            self.last_softmax = softmax
+        return softmax
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
         """Calculates the gradient of the softmax layer.
@@ -24,6 +26,7 @@ class Softmax(Component):
         and some multiplication tricks in order to calculate the batch of gradients
         needed for the backpropagation.
         """
+        assert self.training, "Backward should not be called in evaluation mode"
         assert self.last_softmax is not None, "Forward must be called before backward"
 
         b = np.einsum("ij,ij->i", grad, self.last_softmax).reshape(-1, 1)

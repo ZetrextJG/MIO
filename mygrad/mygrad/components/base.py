@@ -6,6 +6,15 @@ from mygrad.parameters import Parameter
 
 
 class Component(ABC):
+    def __init__(self) -> None:
+        self.training: bool = True
+
+    def train(self) -> None:
+        self.training = True
+
+    def eval(self) -> None:
+        self.training = False
+
     @abstractmethod
     def forward(self, x: np.ndarray) -> np.ndarray:
         """Does the forward pass of the component"""

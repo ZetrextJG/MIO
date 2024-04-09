@@ -11,8 +11,11 @@ MODES = Literal["min", "max"]
 
 
 class EarlyStopping(Plugin):
-    def __init__(self, patience: int, metric: str = "loss", mode: MODES = "min"):
+    def __init__(
+        self, patience: int, warmup: int = 0, metric: str = "loss", mode: MODES = "min"
+    ):
         self.patience = patience
+        self.warmup = warmup
         self.metric = metric
         self.mode = mode
         self.best_metric = np.inf if mode == "min" else -np.inf
@@ -26,12 +29,17 @@ class EarlyStopping(Plugin):
     def on_validation_end(self, epoch: int, validation_outputs: dict):
         super().on_validation_end(epoch, validation_outputs)
         val_metric = validation_outputs[self.metric]
+        if self.wait < self.warmup:
+            self.best_metric = val_metric
+            self.wait += 1
+            return
+
         if self.is_improving(val_metric):
             self.best_metric = val_metric
             self.wait = 0
         else:
             self.wait += 1
-            if self.wait >= self.patience:
+            if self.wait >= self.patience + self.warmup:
                 print(f"Early stopping at epoch {epoch}")
                 self.trainer.stop_training = True
 

@@ -3,7 +3,7 @@ from mygrad.dataloaders import Dataloader
 from mygrad.trainers.base import Trainer
 from dataclasses import dataclass
 import numpy as np
-from mygrad.functional import fscore, fscore_onehot
+from mygrad.functional import fscore, onehot_decode
 
 
 @dataclass
@@ -44,7 +44,10 @@ class CategoricalClassificationTrainer(Trainer):
         all_ys_pred = np.concatenate(all_ys_pred, axis=0)
         loss = self.loss_func.value(all_ys_pred, all_ys)
 
-        all_ys_pred = np.argmax(all_ys_pred, axis=1, keepdims=True)
-        f_score = fscore_onehot(all_ys, all_ys_pred)
+        all_ys_pred = np.argmax(
+            all_ys_pred, axis=1, keepdims=True
+        )  # This is not one hot encoded
+        all_ys = onehot_decode(all_ys)
+        f_score = fscore(all_ys, all_ys_pred, y_batch.shape[1])
 
         return {"loss": float(loss), "fscore": float(f_score)}
