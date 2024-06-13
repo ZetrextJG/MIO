@@ -1,0 +1,55 @@
+mutation:
+  method: gaussian
+  prob: 0.2
+  sigma: 0.1
+
+crossover:
+  method: pointwise
+  prob: 0.7
+
+selection:
+  method: roulette
+  percent: 0.5
+
+population_size: 1000
+function: parabolid3D
+timesteps: 1000
+
+repeats: 20
+
+filename: results.jsonl
+
+
+
+
+defaults:
+  - override hydra/launcher: submitit_local
+
+hydra:
+  launcher:
+    cpus_per_task: 1
+    tasks_per_node: 1
+    mem_gb: 1
+    nodes: 1
+    # gpus_per_task: 0
+    # partition: null
+    # array_parallelism: 64
+    # account: null
+    # additional_parameters:
+    #   nodelist: null
+
+  sweep:
+    dir: outputs/${hydra.job.name}
+    subdir: ${hydra.job.num}
+  sweeper:
+    params:
+      function: parabolid3D, rastrigin10D
+      mutation.prob: 0.1, 0.2, 0.3
+      # mutation.sigma: 0.1, 0.2, 0.3
+      # crossover.method: pointwise, mean
+      # crossover.prob: 0.5, 0.7, 0.9
+      # selection.method: roulette, fittest, elitist15, elitist30
+      # selection.prob: 0.5, 0.7, 0.9
+
+
+
