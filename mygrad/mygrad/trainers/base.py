@@ -58,16 +58,19 @@ class Trainer:
             plugin.set_trainer(self)
 
     def start_training(self, train_epochs: int):
+        self.model.train()
         for plugin in self.plugins:
             plugin.on_training_start(train_epochs)
 
     def start_epoch(self, epoch: int):
+        self.model.train()
         for plugin in self.plugins:
             plugin.on_epoch_begin(epoch)
 
     def end_epoch(self, epoch: int, epoch_outputs: dict):
         for plugin in self.plugins:
             plugin.on_epoch_end(epoch, epoch_outputs)
+        self.model.eval()
 
     def start_batch(self, epoch: int, batch: int):
         for plugin in self.plugins:
@@ -78,27 +81,32 @@ class Trainer:
             plugin.on_batch_end(epoch, batch, batch_outputs)
 
     def start_validation(self, epoch: int):
+        self.model.eval()
         for plugin in self.plugins:
             plugin.on_validation_begin(epoch)
 
     def end_validation(self, epoch: int, val_outputs: dict):
         for plugin in self.plugins:
             plugin.on_validation_end(epoch, val_outputs)
+        self.model.train()
 
     def train(self, train_epochs: int) -> dict:
         self.start_training(train_epochs)
         results = []
         for epoch in range(train_epochs):
             result = self.train_epoch(epoch)
-            results.append(result)
             if self.stop_training:
                 break
             if self.validation_dataloader is not None:
-                self.validation_epoch(epoch)
+                val_result = self.validation_epoch(epoch)
+                for key, value in val_result.items():
+                    result[f"val_{key}"] = value
+            results.append(result)
         return concat_dicts(results)
 
     def eval(self, dataloader: Dataloader) -> dict:
         """Overwrite if needed"""
+        self.model.eval()
         all_ys = []
         all_ys_pred = []
         for x_batch, y_batch in dataloader:
@@ -106,6 +114,7 @@ class Trainer:
             all_ys.append(y_batch)
             all_ys_pred.append(y_pred)
         self.model.zero_grad()
+        self.model.train()
 
         all_ys = np.concatenate(all_ys, axis=0)
         all_ys_pred = np.concatenate(all_ys_pred, axis=0)

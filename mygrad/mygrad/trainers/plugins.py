@@ -97,14 +97,14 @@ class ParamInfoStore(Plugin):
         store_params_lengths: bool = False,
         store_params_angle_diffs: bool = False,
     ):
-        self.store_train_epochs_losses = store_train_epochs_losses
+        self.store_train_batch_losses = store_train_epochs_losses
         self.store_params_lengths = store_params_lengths
         self.store_params_angle_diffs = store_params_angle_diffs
 
     def init_stores(self, train_epochs: int):
         train_dataset_length = len(self.trainer.train_dataloader)
-        if self.store_train_epochs_losses:
-            self.train_epochs_losses = np.empty(train_epochs * train_dataset_length)
+        if self.store_train_batch_losses:
+            self.train_batch_losses = np.empty(train_epochs * train_dataset_length)
         if self.store_params_lengths:
             self.params_lengths = np.empty(train_epochs * train_dataset_length)
         if self.store_params_angle_diffs:
@@ -116,8 +116,8 @@ class ParamInfoStore(Plugin):
     def update_stores(self, epoch: int, batch: int, loss_value: float):
         train_dataset_length = len(self.trainer.train_dataloader)
         store_idx = epoch * train_dataset_length + batch
-        if self.store_train_epochs_losses:
-            self.train_epochs_losses[store_idx] = loss_value
+        if self.store_train_batch_losses:
+            self.train_batch_losses[store_idx] = loss_value
 
         if self.store_params_lengths or self.store_params_angle_diffs:
             current_params = np.concatenate(

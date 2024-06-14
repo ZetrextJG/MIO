@@ -10,6 +10,7 @@ from mygrad.functional import fscore, onehot_decode
 class BinaryClassificationTrainer(Trainer):
     @override
     def eval(self, dataloader: Dataloader) -> dict:
+        self.model.eval()
         all_ys = []
         all_ys_pred = []
         for x_batch, y_batch in dataloader:
@@ -17,6 +18,7 @@ class BinaryClassificationTrainer(Trainer):
             all_ys.append(y_batch)
             all_ys_pred.append(y_pred)
         self.model.zero_grad()
+        self.model.train()
 
         all_ys = np.concatenate(all_ys, axis=0).astype(int)
         all_ys_pred = np.concatenate(all_ys_pred, axis=0)
@@ -32,6 +34,7 @@ class BinaryClassificationTrainer(Trainer):
 class CategoricalClassificationTrainer(Trainer):
     @override
     def eval(self, dataloader: Dataloader) -> dict:
+        self.model.eval()
         all_ys = []
         all_ys_pred = []
         for x_batch, y_batch in dataloader:
@@ -39,6 +42,7 @@ class CategoricalClassificationTrainer(Trainer):
             all_ys.append(y_batch)
             all_ys_pred.append(y_pred)
         self.model.zero_grad()
+        self.model.train()
 
         all_ys = np.concatenate(all_ys, axis=0).astype(int)
         all_ys_pred = np.concatenate(all_ys_pred, axis=0)

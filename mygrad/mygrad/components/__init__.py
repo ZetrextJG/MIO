@@ -13,3 +13,4 @@ from mygrad.components.activations import (
 from mygrad.components.sequential import Sequential
 from mygrad.components.dense import Dense, SimpleDense
 from mygrad.components.softmax import Softmax
+from mygrad.components.dropout import Dropout

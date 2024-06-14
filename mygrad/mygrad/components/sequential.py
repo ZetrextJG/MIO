@@ -47,3 +47,13 @@ class Sequential(FixedDimension, Component):
         body = ",\n".join([str(comp) for comp in self.components])
         indeted_body = indent_lines(body)
         return f"Sequential(\n{indeted_body}\n)"
+
+    def train(self) -> None:
+        super().train()
+        for component in self.components:
+            component.train()
+
+    def eval(self) -> None:
+        super().eval()
+        for component in self.components:
+            component.eval()
