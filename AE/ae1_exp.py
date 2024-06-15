@@ -5,6 +5,7 @@ import sys
 from functools import partial
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 import math
 
 
@@ -92,16 +93,18 @@ class Selection:
         m = int(population.shape[0] * elite_percentage)
         sorted_population = population[np.argsort(fitness)[::-1]]
 
-        population = list(sorted_population[:m])
-        left_over_population = list(sorted_population[m:])
-        while len(population) < n:
-            probs = np.array([fitness[i] for i in range(len(left_over_population))])
-            probs = probs / probs.sum()
-            idx = np.random.choice(len(left_over_population), p=probs)
-            ind = left_over_population.pop(idx)
-            population.append(ind)
+        elite_population = sorted_population[:m]
+        left_over_population = sorted_population[m:]
+        left_over_fitness = fitness[np.argsort(fitness)[::-1]][m:]
 
-        return np.array(population)
+        rest = []
+        while (len(elite_population) + len(rest)) < n:
+            probs = left_over_fitness / left_over_fitness.sum()
+            idx = np.random.choice(len(left_over_population), p=probs)
+            left_over_fitness[idx] = 0 # This individual will never be picked again
+            rest.append(left_over_population[idx])
+
+        return np.concatenate((elite_population, np.array(rest)))
 
 
     @staticmethod
@@ -120,7 +123,7 @@ CROSSOVERS = {
 SELECTIONS = {
     "roulette": Selection.roulette,
     "elitist15": partial(Selection.elitist, elite_percentage=0.15),
-    "elitist30": partial(Selection.elitist, elitism_selection=0.3),
+    "elitist30": partial(Selection.elitist, elite_percentage=0.3),
     "fittest": Selection.fittest
 }
 
@@ -159,7 +162,10 @@ def denest_config(cfg: DictConfig, prefix="") -> DictConfig:
 def my_app(cfg: DictConfig) -> None:
     assert cfg.mutation.method == "gaussian", "Only gaussian mutation is supported"
     output_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir)
+    print(output_dir)
     output_file = output_dir / cfg.filename
+    assert output_dir.exists()
+    assert not output_file.exists()
 
     crossover = CROSSOVERS[cfg.crossover.method]
     selection = SELECTIONS[cfg.selection.method]
@@ -173,7 +179,7 @@ def my_app(cfg: DictConfig) -> None:
         raise ValueError("Function not supported")
 
     records = []
-    for r in range(cfg.repeats):
+    for r in tqdm(range(cfg.repeats)):
         # Initialize the population
         population = np.random.random((
             cfg.population_size, dims

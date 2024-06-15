@@ -7,11 +7,27 @@ from mygrad.parameters import Parameter
 EPSILON = 1e-8
 
 
+def softmax_stable(x):
+    e = np.exp(x - np.max(x, axis=1, keepdims=True))
+    return e / np.sum(e, axis=1).reshape(-1, 1)
+
+
+def softmax_original(x):
+    intermid = np.exp(x)
+    sums = np.sum(intermid, axis=1)
+    softmax = intermid / sums.reshape(-1, 1)
+    return softmax
+
+
 class Softmax(Component):
+    def __init__(self, version="original"):
+        if version == "original":
+            self.softmax_function = softmax_original
+        elif version == "stable":
+            self.softmax_function = softmax_stable
+
     def forward(self, x: np.ndarray) -> np.ndarray:
-        intermid = np.exp(x)
-        sums = np.sum(intermid, axis=1)
-        softmax = intermid / sums.reshape(-1, 1)
+        softmax = self.softmax_function(x)
         if self.training:
             self.last_softmax = softmax
         return softmax

@@ -1,11 +1,14 @@
 from impl import MLP, Layer, Normalizer, linear, sigmoid
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 # Square simple
 
-df_train = pd.read_csv("../mio1/regression/square-simple-training.csv")
-df_test = pd.read_csv("../mio1/regression/square-simple-test.csv")
+
+df_train = pd.read_csv("mio1/regression/square-simple-training.csv")
+df_test = pd.read_csv("mio1/regression/square-simple-test.csv")
 
 X_train = df_train["x"].values
 y_train = df_train["y"].values
@@ -50,6 +53,14 @@ if __name__ == "__main__":
     test_loss = model.forward_loss(x_normalizer.transform(X_test), y_test)
     print(f"MSE on test dataset: {test_loss}")
 
+    
+    X_test_scaled = x_normalizer.transform(X_test)
+    plt.plot(X_test_scaled, y_test, "ro", label = "Dane testowe")
+    plt.plot(X_test_scaled, model.forward(X_test_scaled), "bo", label = "Predykcje")
+    plt.legend()
+    plt.title("Predykcje modelu na danych testowych dla square-simple")
+    plt.show()
+
     # 1 hidden 10 neurons
     print("Raw model with 1 hidden layer 10 neurons")
     mlp = MLP(
@@ -69,3 +80,4 @@ if __name__ == "__main__":
         ]
     )
     print(mlp.forward_loss(X_test, y_test))
+

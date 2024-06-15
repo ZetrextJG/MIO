@@ -1,10 +1,11 @@
 from impl import MLP, Layer, linear, sigmoid
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
 
 # Steps large
-df_train = pd.read_csv("../mio1/regression/steps-large-training.csv")
-df_test = pd.read_csv("../mio1/regression/steps-large-test.csv")
+df_train = pd.read_csv("mio1/regression/steps-large-training.csv")
+df_test = pd.read_csv("mio1/regression/steps-large-test.csv")
 
 X_train = df_train["x"].values
 y_train = df_train["y"].values
@@ -49,6 +50,12 @@ if __name__ == "__main__":
     print(f"MSE on training dataset: {train_loss}")
     test_loss = model.forward_loss(X_test, y_test)
     print(f"MSE on test dataset: {test_loss}")
+
+    plt.plot(X_test, y_test, "ro", label = "Dane testowe")
+    plt.plot(X_test, model.forward(X_test), "bo", label = "Predykcje")
+    plt.legend()
+    plt.title("Predykcje modelu na danych testowych dla steps-large")
+    plt.show()
 
     # 1 hidden 10 neurons
     print("Raw model with 1 hidden layer 10 neurons")

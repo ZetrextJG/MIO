@@ -1,29 +1,27 @@
 mutation:
   method: gaussian
-  prob: 0.2
-  sigma: 0.1
+  prob: 0.3
+  sigma: 0.3
 
 crossover:
   method: pointwise
-  prob: 0.7
+  prob: 0.9
 
 selection:
-  method: roulette
-  percent: 0.5
+  method: elitist30
 
 population_size: 1000
-function: parabolid3D
+function: null
 timesteps: 1000
 
-repeats: 20
+repeats: 100
 
 filename: results.jsonl
 
 
-
-
+# SETTINGS FOR MULTIRUN
 defaults:
-  - override hydra/launcher: submitit_local
+  - override hydra/launcher: submitit_slurm
 
 hydra:
   launcher:
@@ -31,25 +29,31 @@ hydra:
     tasks_per_node: 1
     mem_gb: 1
     nodes: 1
-    # gpus_per_task: 0
-    # partition: null
-    # array_parallelism: 64
-    # account: null
-    # additional_parameters:
-    #   nodelist: null
+    gpus_per_task: 0
+    partition: short
+    array_parallelism: 32
+    account: mi2lab-normal
+    additional_parameters:
+      time: 0-01:00:00
+      nodelist: dgx-4
 
   sweep:
-    dir: outputs/${hydra.job.name}
+    dir: outputs/ae1_exp2
     subdir: ${hydra.job.num}
   sweeper:
     params:
       function: parabolid3D, rastrigin10D
-      mutation.prob: 0.1, 0.2, 0.3
-      # mutation.sigma: 0.1, 0.2, 0.3
-      # crossover.method: pointwise, mean
-      # crossover.prob: 0.5, 0.7, 0.9
-      # selection.method: roulette, fittest, elitist15, elitist30
-      # selection.prob: 0.5, 0.7, 0.9
+      population_size: 10, 100, 1000
 
 
+
+
+# First search
+# function: parabolid3D, rastrigin10D
+# mutation.prob: 0.1, 0.2, 0.3
+# mutation.sigma: 0.1, 0.2, 0.3
+# crossover.method: pointwise, mean
+# crossover.prob: 0.7, 0.8, 0.9
+# selection.method: roulette, fittest, elitist15, elitist30
+# selection.percent: 0.5, 0.7, 0.9
 
